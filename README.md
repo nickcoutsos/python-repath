@@ -1,4 +1,4 @@
-# repath
+# repath [![Build Status](https://travis-ci.org/nickcoutsos/python-repath.svg)](https://travis-ci.org/nickcoutsos/python-repath)
 
 *Or something*
 
