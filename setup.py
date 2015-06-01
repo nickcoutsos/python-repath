@@ -3,13 +3,14 @@ from setuptools import setup
 setup(
     name='repath',
     version='0.1.0',
+    url='https://github.com/nickcoutsos/python-repath',
     author='Nikolaos Coutsos',
     author_email='ncoutsos@gmail.com',
     description='Generate regular expressions form ExpressJS path patterns',
     long_description=(
-        'A port of the pathToRegexp node module to Python.'
-        'Parses express-style paths to PCRE regular expression patterns, taking'
-        'advantage of named capture groups.'
+        'A port of the pathToRegexp node module to Python. '
+        'Parses express-style paths to PCRE regular expression patterns, '
+        'taking advantage of Python\'s named capture groups.'
     ),
     packages=[],
     py_modules=['repath'],

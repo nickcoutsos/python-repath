@@ -1,6 +1,6 @@
 # repath [![Build Status](https://travis-ci.org/nickcoutsos/python-repath.svg)](https://travis-ci.org/nickcoutsos/python-repath) [![Coverage Status](https://coveralls.io/repos/nickcoutsos/python-repath/badge.svg?branch=master)](https://coveralls.io/r/nickcoutsos/python-repath?branch=master)
 
-*Or something*
+*Now on pypi*
 
 A port of the node module `path-to-regexp` to Python.
 
@@ -13,13 +13,14 @@ A port of the node module `path-to-regexp` to Python.
 ## Installation
 
 *repath* is a single module, so installation can be as simple as copying the
-`repath.py` file to your project directory, but you can also cd to your cloned
-repository and:
+`repath.py` file to your project directory, but traditional methods are also
+available:
 
-* `python setup.py install`, or
-* `pip install ./`
-
-*repath* is not currently available on pypi.
+* Clone this repo, and from the working directory run:
+    * `python setup.py install`, or
+    * `pip install ./`
+* Or fetch from pypi with:
+    * `pip install repath`
 
 
 ## Usage
