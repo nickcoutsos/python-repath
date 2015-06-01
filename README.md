@@ -1,4 +1,4 @@
-# repath [![Build Status](https://travis-ci.org/nickcoutsos/python-repath.svg)](https://travis-ci.org/nickcoutsos/python-repath) [![Coverage Status](https://coveralls.io/repos/nickcoutsos/python-repath/badge.svg)](https://coveralls.io/r/nickcoutsos/python-repath)
+# repath [![Build Status](https://travis-ci.org/nickcoutsos/python-repath.svg)](https://travis-ci.org/nickcoutsos/python-repath) [![Coverage Status](https://coveralls.io/repos/nickcoutsos/python-repath/badge.svg?branch=master)](https://coveralls.io/r/nickcoutsos/python-repath?branch=master)
 
 *Or something*
 
