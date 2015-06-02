@@ -1729,7 +1729,7 @@ class Tests(unittest.TestCase):
 
     def test_should_expose_method_to_compile_tokens_to_path_function(self):
         tokens = repath.parse(self.path)
-        fn = repath.tokens_to_function(tokens)
+        fn = repath.tokens_to_template(tokens)
 
         self.assertEqual(fn({'id': 123}), '/user/123')
 

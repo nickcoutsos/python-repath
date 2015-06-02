@@ -14,6 +14,11 @@ PATH_REGEXP = re.compile('|'.join([
     # "/*"            => ["/", undefined, undefined, undefined, undefined, "*"]
     '([\\/.])?(?:(?:\\:(\\w+)(?:\\(((?:\\\\.|[^()])+)\\))?|\\(((?:\\\\.|[^()])+)\\))([+*?])?|(\\*))'
 ]))
+PATTERNS = dict(
+    REPEAT='(?:{prefix}{capture})*',
+    OPTIONAL='(?:{prefix}({name}{capture}))?',
+    REQUIRED='{prefix}({name}{capture})'
+)
 
 
 def escape_string(string):
@@ -85,53 +90,53 @@ def parse(string):
     return tokens
 
 
-def tokens_to_function(tokens):
+def tokens_to_template(tokens):
     """
-    Expose a method for transforming tokens into the path function.
+    Generate a function for templating tokens into a path string.
 
     """
-    def transform(obj):
+    def template(obj):
         path = ''
         obj = obj or {}
 
-        for key in tokens:
-            if isinstance(key, basestring):
-                path += key
+        for token in tokens:
+            if isinstance(token, basestring):
+                path += token
                 continue
 
-            regexp = re.compile('^%s$' % key['pattern'])
+            regexp = re.compile('^%s$' % token['pattern'])
 
-            value = obj.get(key['name'])
+            value = obj.get(token['name'])
             if value is None:
-                if key["optional"]:
+                if token["optional"]:
                     continue
                 else:
                     raise KeyError(
-                        'Expected "{name}" to be defined'.format(**key)
+                        'Expected "{name}" to be defined'.format(**token)
                     )
 
             if isinstance(value, list):
-                if not key['repeat']:
+                if not token['repeat']:
                     raise TypeError(
-                        'Expected "{name}" to not repeat'.format(**key)
+                        'Expected "{name}" to not repeat'.format(**token)
                     )
 
                 if len(value) == 0:
-                    if key['optional']:
+                    if token['optional']:
                         continue
                     else:
                         raise ValueError(
-                            'Expected "{name}" to not be empty'.format(**key)
+                            'Expected "{name}" to not be empty'.format(**token)
                         )
 
                 for i, val in enumerate(value):
                     val = unicode(val)
                     if not regexp.search(val):
                         raise ValueError(
-                            'Expected all "{name}" to match "{pattern}"'.format(**key)
+                            'Expected all "{name}" to match "{pattern}"'.format(**token)
                         )
 
-                    path += key['prefix'] if i == 0 else key['delimiter']
+                    path += token['prefix'] if i == 0 else token['delimiter']
                     path += urllib.quote(val, '')
 
                 continue
@@ -139,14 +144,13 @@ def tokens_to_function(tokens):
             value = unicode(value)
             if not regexp.search(value):
                 raise ValueError(
-                    'Expected "{name}" to match "{pattern}"'.format(**key)
+                    'Expected "{name}" to match "{pattern}"'.format(**token)
                 )
 
-            path += key['prefix'] + urllib.quote(value.encode('utf8'), '-_.!~*\'()')
+            path += token['prefix'] + urllib.quote(value.encode('utf8'), '-_.!~*\'()')
 
         return path
-
-    return transform
+    return template
 
 
 def tokens_to_pattern(tokens, end=True, strict=False):
@@ -155,14 +159,8 @@ def tokens_to_pattern(tokens, end=True, strict=False):
 
     """
     route = ''
-    lastToken = tokens[-1]
-    endsWithSlash = isinstance(lastToken, basestring) and lastToken.endswith('/')
-
-    PATTERNS = dict(
-        REPEAT='(?:{prefix}{capture})*',
-        OPTIONAL='(?:{prefix}({name}{capture}))?',
-        REQUIRED='{prefix}({name}{capture})'
-    )
+    last = tokens[-1]
+    trailing_slash = isinstance(last, basestring) and last.endswith('/')
 
     for token in tokens:
         if isinstance(token, basestring):
@@ -185,13 +183,13 @@ def tokens_to_pattern(tokens, end=True, strict=False):
         route += template.format(**parts)
 
     if not strict:
-        route = route[:-1] if endsWithSlash else route
+        route = route[:-1] if trailing_slash else route
         route += '(?:/(?=$))?'
 
     if end:
         route += '$'
     else:
-        route += '' if strict and endsWithSlash else '(?=/|$)'
+        route += '' if strict and trailing_slash else '(?=/|$)'
 
     return '^%s' % route
 
@@ -244,4 +242,4 @@ def compile(string):
     Compile a string to a template function for the path.
 
     """
-    return tokens_to_function(parse(string))
+    return tokens_to_template(parse(string))
