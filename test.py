@@ -5,10 +5,6 @@ import nose.tools
 
 import repath
 
-def flags(options):
-    options = options or {}
-    return 0 if options.get('sensitive') else re.I
-
 
 TEST_CASES = [
     # Simple paths.
@@ -1675,8 +1671,10 @@ def test_generator():
 
 
 def check_definition(path, opts, tokens, match_cases, compile_cases):
-    pattern = repath.path_to_pattern(path, [], opts)
-    regexp = re.compile(pattern, flags(opts))
+    opts = opts or {}
+    sensitive = opts.pop('sensitive', False)
+    pattern = repath.path_to_pattern(path, [], **opts)
+    regexp = re.compile(pattern, 0 if sensitive else re.I)
 
     if isinstance(path, basestring):
         nose.tools.eq_(repath.parse(path), tokens)
@@ -1724,7 +1722,7 @@ class Tests(unittest.TestCase):
 
     def test_should_accept_array_of_keys_as_second_arg(self):
         keys = []
-        pattern = repath.path_to_pattern(self.path, keys, {'end': False})
+        pattern = repath.path_to_pattern(self.path, keys, end=False)
         regexp = re.compile(pattern)
 
         # self.assertEqual(regexp.keys, keys)
@@ -1732,7 +1730,7 @@ class Tests(unittest.TestCase):
         self.check_regex_match(regexp, '/user/123/show', '/user/123', '123')
 
     def test_should_work_with_keys_argument_as_none(self):
-        pattern = repath.path_to_pattern(self.path, None, {'end': False})
+        pattern = repath.path_to_pattern(self.path, None, end=False)
         regexp = re.compile(pattern)
 
         # self.assertEqual(regexp.keys, [self.param])

@@ -37,7 +37,7 @@ if match:
 ```
 
 - **path** A string in the express format, an array of strings, or a regular expression.
-- **options**
+- **kwargs**
     - **strict** When `False` the trailing slash is optional. (default: `False`)
     - **end** Attempt to match full paths (default: `True`)
         - `/foo/bar` with `end=False` will match `/foo/bar` or `/foo/bar/baz`
@@ -190,7 +190,7 @@ only works with strings.
 Path-To-RegExp exposes the two functions used internally that accept an array of
 tokens.
 
-* `repath.tokens_to_pattern(tokens, options)` Transform an array of tokens into
-a matching regular expression pattern.
+* `repath.tokens_to_pattern(tokens, strict=False, end=True)` Transform an array
+of tokens into a matching regular expression pattern.
 * `repath.tokens_to_function(tokens)` Transform an array of tokens into a path
 templating function.

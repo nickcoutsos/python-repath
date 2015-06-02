@@ -176,15 +176,11 @@ def regexp_to_pattern(regexp, keys):
     return regexp.pattern
 
 
-def tokens_to_pattern(tokens, options=None):
+def tokens_to_pattern(tokens, end=True, strict=False):
     """
     Generate a pattern for the given list of tokens.
 
     """
-    options = options or {}
-
-    strict = options.get('strict')
-    end = options.get('end') != False
     route = ''
     lastToken = tokens[-1]
     endsWithSlash = isinstance(lastToken, basestring) and lastToken.endswith('/')
@@ -227,20 +223,20 @@ def tokens_to_pattern(tokens, options=None):
     return '^%s' % route
 
 
-def array_to_pattern(paths, keys, options):
+def array_to_pattern(paths, keys, **options):
     """
     Generate a single pattern from an array of path pattern values.
 
     """
     parts = [
-        path_to_pattern(path, keys, options)
+        path_to_pattern(path, keys, **options)
         for path in paths
     ]
 
     return '(?:%s)' % ('|'.join(parts))
 
 
-def string_to_pattern(path, keys, options):
+def string_to_pattern(path, keys, **options):
     """
     Generate pattern for a string.
 
@@ -248,7 +244,7 @@ def string_to_pattern(path, keys, options):
 
     """
     tokens = parse(path)
-    pattern = tokens_to_pattern(tokens, options)
+    pattern = tokens_to_pattern(tokens, **options)
 
     tokens = filter(lambda t: not isinstance(t, basestring), tokens)
     keys.extend(tokens)
@@ -256,7 +252,7 @@ def string_to_pattern(path, keys, options):
     return pattern
 
 
-def path_to_pattern(path, keys=None, options=None):
+def path_to_pattern(path, keys=None, **options):
     """
     Generate a pattern from any kind of path value.
 
@@ -265,13 +261,12 @@ def path_to_pattern(path, keys=None, options=None):
 
     """
     keys = keys if keys is not None else []
-    options = options if options is not None else {}
 
     if isinstance(path, REGEXP_TYPE):
         return regexp_to_pattern(path, keys)
     if isinstance(path, list):
-        return array_to_pattern(path, keys, options)
-    return string_to_pattern(path, keys, options)
+        return array_to_pattern(path, keys, **options)
+    return string_to_pattern(path, keys, **options)
 
 
 def compile(string):
