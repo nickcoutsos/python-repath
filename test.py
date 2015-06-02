@@ -1673,7 +1673,7 @@ def test_generator():
 def check_definition(path, opts, tokens, match_cases, compile_cases):
     opts = opts or {}
     sensitive = opts.pop('sensitive', False)
-    pattern = repath.path_to_pattern(path, [], **opts)
+    pattern = repath.path_to_pattern(path, **opts)
     regexp = re.compile(pattern, 0 if sensitive else re.I)
 
     if isinstance(path, basestring):
@@ -1719,22 +1719,6 @@ class Tests(unittest.TestCase):
         self.assertIsNotNone(match)
         self.assertEqual(match.group(0), matched)
         self.assertEqual(list(match.groups()), list(captures))
-
-    def test_should_accept_array_of_keys_as_second_arg(self):
-        keys = []
-        pattern = repath.path_to_pattern(self.path, keys, end=False)
-        regexp = re.compile(pattern)
-
-        # self.assertEqual(regexp.keys, keys)
-        self.assertEqual(keys, [self.param])
-        self.check_regex_match(regexp, '/user/123/show', '/user/123', '123')
-
-    def test_should_work_with_keys_argument_as_none(self):
-        pattern = repath.path_to_pattern(self.path, None, end=False)
-        regexp = re.compile(pattern)
-
-        # self.assertEqual(regexp.keys, [self.param])
-        self.check_regex_match(regexp, '/user/123/show', '/user/123', '123')
 
     def test_should_expose_method_to_compile_tokens_to_regexp(self):
         tokens = repath.parse(self.path)

@@ -149,33 +149,6 @@ def tokens_to_function(tokens):
     return transform
 
 
-def regexp_to_pattern(regexp, keys):
-    """
-    Generate a pattern based on a compiled regular expression.
-
-    This function exists for a semblance of compatibility with pathToRegexp
-    and serves basically no purpose beyond making sure the pre-existing tests
-    continue to pass.
-
-    """
-    match = re.search(r'\((?!\?)', regexp.pattern)
-
-    if match:
-        keys.extend([
-            {
-                'name': i,
-                'prefix': None,
-                'delimiter': None,
-                'optional': False,
-                'repeat': False,
-                'pattern': None
-            }
-            for i in range(len(match.groups()))
-        ])
-
-    return regexp.pattern
-
-
 def tokens_to_pattern(tokens, end=True, strict=False):
     """
     Generate a pattern for the given list of tokens.
@@ -223,20 +196,20 @@ def tokens_to_pattern(tokens, end=True, strict=False):
     return '^%s' % route
 
 
-def array_to_pattern(paths, keys, **options):
+def array_to_pattern(paths, **options):
     """
     Generate a single pattern from an array of path pattern values.
 
     """
     parts = [
-        path_to_pattern(path, keys, **options)
+        path_to_pattern(path, **options)
         for path in paths
     ]
 
     return '(?:%s)' % ('|'.join(parts))
 
 
-def string_to_pattern(path, keys, **options):
+def string_to_pattern(path, **options):
     """
     Generate pattern for a string.
 
@@ -247,12 +220,11 @@ def string_to_pattern(path, keys, **options):
     pattern = tokens_to_pattern(tokens, **options)
 
     tokens = filter(lambda t: not isinstance(t, basestring), tokens)
-    keys.extend(tokens)
 
     return pattern
 
 
-def path_to_pattern(path, keys=None, **options):
+def path_to_pattern(path, **options):
     """
     Generate a pattern from any kind of path value.
 
@@ -260,13 +232,11 @@ def path_to_pattern(path, keys=None, **options):
     and calls it with the provided values.
 
     """
-    keys = keys if keys is not None else []
-
     if isinstance(path, REGEXP_TYPE):
-        return regexp_to_pattern(path, keys)
+        return path.pattern
     if isinstance(path, list):
-        return array_to_pattern(path, keys, **options)
-    return string_to_pattern(path, keys, **options)
+        return array_to_pattern(path, **options)
+    return string_to_pattern(path, **options)
 
 
 def compile(string):
