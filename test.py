@@ -5,6 +5,51 @@ import nose.tools
 
 import repath
 
+class RePathTestCase(unittest.TestCase):
+    pattern = None
+    regex = None
+    template = None
+    tokens = None
+
+    def path(self, path, options=None):
+        flags = 0 if options.get('sensitive') else re.I
+        self.pattern = repath.path_to_pattern(path, options)
+        self.regex = re.compile(self.pattern, flags)
+        self.template = repath.compile(path)
+
+        if isinstance(path, basestring):
+            self.tokens = repath.parse(path)
+
+    def assert_parsed(self, tokens):
+        self.assertEqual(self.tokens, tokens)
+
+    def assert_will_match(self, string, matched):
+        if self.regex is None:
+            raise Exception('Call ParameterizedTest.path before assert_will_match')
+
+        match = self.regex.match(string)
+        if matched is None:
+            self.assertIsNone(match)
+        else:
+            self.assertEqual(match.group(0), matched)
+
+    def assert_will_capture(self, string, *groups, **named_groups):
+        match = self.regex.match(string)
+
+        self.assertIsNotNone(match)
+        self.assertEqual(match.groups(), groups)
+        self.assertEqual(match.groupdict(), named_groups)
+
+    def assert_will_template(self, result, **fields):
+        if self.template is None:
+            raise Exception('Call ParameterizedTest.path before assert_will_template')
+
+        if result is None:
+            with self.assertRaises(Exception):
+                self.template(fields)
+        else:
+            self.assertEqual(self.template(fields), result)
+
 
 TEST_CASES = [
     # Simple paths.
