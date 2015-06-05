@@ -2,18 +2,56 @@ import re
 import urllib
 
 REGEXP_TYPE = type(re.compile(''))
-PATH_REGEXP = re.compile('|'.join([
-    # Match escaped characters that would otherwise appear in future matches.
-    # This allows the user to escape special characters that won't transform.
-    '(\\\\.)',
-    # Match Express-style parameters and un-named parameters with a prefix
-    # and optional suffixes. Matches appear as:
-    #
-    # "/:test(\\d+)?" => ["/", "test", "\d+", undefined, "?", undefined]
-    # "/route(\\d+)"  => [undefined, undefined, undefined, "\d+", undefined, undefined]
-    # "/*"            => ["/", undefined, undefined, undefined, undefined, "*"]
-    '([\\/.])?(?:(?:\\:(\\w+)(?:\\(((?:\\\\.|[^()])+)\\))?|\\(((?:\\\\.|[^()])+)\\))([+*?])?|(\\*))'
-]))
+
+
+# Match escaped characters that would otherwise appear in future matches.
+# This allows the user to escape special characters that won't transform.
+#
+# Match Express-style parameters and un-named parameters with a prefix
+# and optional suffixes. Matches appear as:
+#
+#  Path         | prefix | name   | capture | group | suffix | asterisk
+# --------------+--------+--------+---------+-------+--------+----------
+#  /:test(\d+)? | "/"    | "test" | "\d+"   | None  | "?"    | None
+#  /route(\d+)  | None   | None   | None    | "\d+" | None   | None
+#  /*           | "/"    | None   | None    | None  | None   | "*"
+
+PATH_REGEXP = re.compile(r'''
+    (?P<escaped>\\.)
+    |
+    (?P<prefix>[/.])?
+    (?:
+        (?:
+            \:
+            (?P<name>\w+)
+            (?:
+                \(
+                (?P<capture>
+                    (?:
+                        \\.
+                        |
+                        [^()]
+                    )+
+                )
+                \)
+            )?
+            |
+            \(
+            (?P<group>
+                (?:
+                    \\.
+                    |
+                    [^()]
+                )
+            +)
+            \)
+        )
+        (?P<suffix>[+*?])?
+        |
+        (?P<asterisk>\*)
+    )
+''', re.X)
+
 PATTERNS = dict(
     REPEAT='(?:{prefix}{capture})*',
     OPTIONAL='(?:{prefix}({name}{capture}))?',
@@ -46,40 +84,36 @@ def parse(string):
     path = ''
 
     for match in PATH_REGEXP.finditer(string):
-        matched = match.group(0)
-        escaped = match.group(1)
+        parts = match.groupdict()
         offset = match.start(0)
         path += string[index:offset]
-        index = offset + len(matched)
+        index = offset + len(match.group(0))
 
-        if escaped:
-            path += escaped[1]
+        if parts['escaped']:
+            path += parts['escaped'][1]
             continue
 
         if path:
             tokens.append(path)
             path = ''
 
-        prefix, name, capture, group, suffix, asterisk = match.groups()[1:]
-        repeat = suffix in ('+', '*')
-        optional = suffix in ('?', '*')
-        delimiter = prefix or '/'
+        delimiter = parts['prefix'] or '/'
         token_pattern = (
-            capture or
-            group or
-            ('.*' if asterisk else '[^%s]+?' % delimiter)
+            parts['capture'] or
+            parts['group'] or
+            ('.*' if parts['asterisk'] else '[^%s]+?' % delimiter)
         )
 
-        if not name:
-            name = key
+        if not parts['name']:
+            parts['name'] = key
             key += 1
 
         token = {
-            'name': str(name),
-            'prefix': prefix or '',
+            'name': str(parts['name']),
+            'prefix': parts['prefix'] or '',
             'delimiter': delimiter,
-            'optional': optional,
-            'repeat': repeat,
+            'optional': parts['suffix'] in ('?', '*'),
+            'repeat': parts['suffix'] in ('+', '*'),
             'pattern': escape_group(token_pattern),
         }
 

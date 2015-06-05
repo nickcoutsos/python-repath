@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='repath',
-    version='0.6.0',
+    version='0.6.1',
     url='https://github.com/nickcoutsos/python-repath',
     author='Nikolaos Coutsos',
     author_email='ncoutsos@gmail.com',
