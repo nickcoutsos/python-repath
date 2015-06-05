@@ -29,7 +29,7 @@ available:
 import re
 import repath
 
-pattern = repath.path_to_pattern(path)
+pattern = repath.pattern(path)
 match = re.match(pattern, requested_url_path)
 
 if match:
@@ -44,7 +44,7 @@ if match:
         - `/foo/bar` with `end=True` will only match `/foo/bar`
 
 ```python
->>> path_to_pattern('/foo/:bar')
+>>> pattern('/foo/:bar')
 '^/foo/(?<bar>[^/]+?)/?$'
 ```
 
@@ -59,7 +59,7 @@ Named parameters are defined by prefixing the parameter name with a colon (e.g.
 `:foo`). By default, this parameter will match up to the next path segment.
 
 ```python
->>> regex = re.compile(path_to_pattern('/:foo/:bar'), re.I)
+>>> regex = re.compile(pattern('/:foo/:bar'), re.I)
 >>> match = regex.match('/test/route')
 >>> match.groups()
 ('test', 'route',)
@@ -76,7 +76,7 @@ parameter optional. This will also make any prefixed path delimiter optional
 (`/` or `.`).
 
 ```python
->>> regex = re.compile(path_to_pattern('/:foo/:bar?'))
+>>> regex = re.compile(pattern('/:foo/:bar?'))
 >>> regex.match('/test').groupdict()
 {'foo': 'test', 'bar': None}
 
@@ -91,7 +91,7 @@ parameter match. The prefixed path delimiter is also taken into account for the
 match.
 
 ```python
->>> regexp = re.compile(path_to_pattern('/:foo*'))
+>>> regexp = re.compile(pattern('/:foo*'))
 >>> regexp.match('/').groupdict()
 {'foo': None}
 
@@ -105,7 +105,7 @@ Parameters can be suffixed with a plus sign (`+`) to denote a one or more
 parameters match. The prefixed path delimiter is included in the match.
 
 ```python
->>> regexp = re.compile(path_to_pattern('/:foo+'))
+>>> regexp = re.compile(pattern('/:foo+'))
 >>> regexp.match('/')
 None
 
@@ -119,7 +119,7 @@ All parameters can be provided a custom matching regexp and override the
 default. Please note: Backslashes need to be escaped in strings.
 
 ```python
->>> regexp = re.compile(path_to_pattern('/:foo(\\d+)'))
+>>> regexp = re.compile(pattern('/:foo(\\d+)'))
 >>> regexp.match('/123').groupdict()
 {'foo': '123'}
 
@@ -134,7 +134,7 @@ works the same as a named parameter, except it must be retrieved by its group
 number.
 
 ```python
->>> regexp = re.compile(path_to_pattern('/:foo/(.*)'))
+>>> regexp = re.compile(pattern('/:foo/(.*)'))
 >>> regexp.match('/test/route').groupdict()
 {'foo': 'test'}
 >>> regexp.match('/test/route').groups()
@@ -147,7 +147,7 @@ An asterisk can be used for matching everything. It is equivalent to an unnamed
 matching group of `(.*)`.
 
 ```python
->>> regexp = re.compile(path_to_pattern('/fooo/*'))
+>>> regexp = re.compile(pattern('/fooo/*'))
 >>> regexp.match('/foo/bar/baz').groups()
 ('bar/baz',)
 ```
@@ -176,7 +176,7 @@ valid path. Confusing enough? This example will straighten everything out for
 you.
 
 ```python
->>> template = repath.compile('/user/:id')
+>>> template = repath.template('/user/:id')
 >>> template({'id': 123})
 '/user/123'
 ```
