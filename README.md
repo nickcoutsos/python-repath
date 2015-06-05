@@ -171,7 +171,7 @@ strings and dictionary tokens.
 
 ### Compile ("Reverse" Path-To-RegExp)
 
-Path-To-RegExp exposes a compile function for transforming an express path into
+*repath* exposes a template function for transforming an express path into a
 valid path. Confusing enough? This example will straighten everything out for
 you.
 
@@ -187,8 +187,8 @@ only works with strings.
 
 ### Working with Tokens
 
-Path-To-RegExp exposes the two functions used internally that accept an array of
-tokens.
+*repath* exposes the two functions used internally to generate output based on
+the parsed array of tokens.
 
 * `repath.tokens_to_pattern(tokens, strict=False, end=True)` Transform an array
 of tokens into a matching regular expression pattern.
