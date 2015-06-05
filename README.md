@@ -1,4 +1,7 @@
-# repath [![Build Status](https://travis-ci.org/nickcoutsos/python-repath.svg)](https://travis-ci.org/nickcoutsos/python-repath) [![Coverage Status](https://coveralls.io/repos/nickcoutsos/python-repath/badge.svg?branch=master)](https://coveralls.io/r/nickcoutsos/python-repath?branch=master)
+# repath
+[![Build Status](https://travis-ci.org/nickcoutsos/python-repath.svg)](https://travis-ci.org/nickcoutsos/python-repath)
+[![Coverage Status](https://coveralls.io/repos/nickcoutsos/python-repath/badge.svg?branch=master)](https://coveralls.io/r/nickcoutsos/python-repath?branch=master)
+[![PyPI version](https://badge.fury.io/py/repath.svg)](http://badge.fury.io/py/repath)
 
 *Now on pypi*
 
