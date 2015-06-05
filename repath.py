@@ -64,7 +64,11 @@ def parse(string):
         repeat = suffix in ('+', '*')
         optional = suffix in ('?', '*')
         delimiter = prefix or '/'
-        pattern = capture or group or ('.*' if asterisk else '[^%s]+?' % delimiter)
+        token_pattern = (
+            capture or
+            group or
+            ('.*' if asterisk else '[^%s]+?' % delimiter)
+        )
 
         if not name:
             name = key
@@ -76,7 +80,7 @@ def parse(string):
             'delimiter': delimiter,
             'optional': optional,
             'repeat': repeat,
-            'pattern': escape_group(pattern),
+            'pattern': escape_group(token_pattern),
         }
 
         tokens.append(token)
@@ -95,7 +99,7 @@ def tokens_to_template(tokens):
     Generate a function for templating tokens into a path string.
 
     """
-    def template(obj):
+    def template_function(obj):
         path = ''
         obj = obj or {}
 
@@ -150,7 +154,7 @@ def tokens_to_template(tokens):
             path += token['prefix'] + urllib.quote(value.encode('utf8'), '-_.!~*\'()')
 
         return path
-    return template
+    return template_function
 
 
 def tokens_to_pattern(tokens, end=True, strict=False):
@@ -179,8 +183,9 @@ def tokens_to_pattern(tokens, end=True, strict=False):
         if token['repeat']:
             parts['capture'] += PATTERNS['REPEAT'].format(**parts)
 
-        template = PATTERNS['OPTIONAL' if token['optional'] else 'REQUIRED']
-        route += template.format(**parts)
+        segment_necessity = 'OPTIONAL' if token['optional'] else 'REQUIRED'
+        segment_template = PATTERNS[segment_necessity]
+        route += segment_template.format(**parts)
 
     if not strict:
         route = route[:-1] if trailing_slash else route
@@ -194,7 +199,7 @@ def tokens_to_pattern(tokens, end=True, strict=False):
     return '^%s' % route
 
 
-def path_to_pattern(path, **options):
+def pattern(path, **options):
     """
     Generate a pattern from any kind of path value.
 
@@ -205,17 +210,13 @@ def path_to_pattern(path, **options):
     if isinstance(path, REGEXP_TYPE):
         return path.pattern
     if isinstance(path, list):
-        parts = [path_to_pattern(p, **options) for p in path]
+        parts = [pattern(p, **options) for p in path]
         return '(?:%s)' % '|'.join(parts)
 
-    tokens = parse(path)
-    pattern = tokens_to_pattern(tokens, **options)
-
-    tokens = filter(lambda t: not isinstance(t, basestring), tokens)
-    return pattern
+    return tokens_to_pattern(parse(path), **options)
 
 
-def compile(string):
+def template(string):
     """
     Compile a string to a template function for the path.
 

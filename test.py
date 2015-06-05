@@ -25,11 +25,11 @@ class RePathTestCase(unittest.TestCase):
     def path(self, path, **options):
         sensitive = options.pop('sensitive', False)
         flags = 0 if sensitive else re.I
-        self.pattern = repath.path_to_pattern(path, **options)
+        self.pattern = repath.pattern(path, **options)
         self.regex = re.compile(self.pattern, flags)
 
         if isinstance(path, basestring):
-            self.template = repath.compile(path)
+            self.template = repath.template(path)
             self.tokens = repath.parse(path)
 
     def assert_parsed(self, *tokens):
@@ -896,7 +896,7 @@ class Tests(unittest.TestCase):
 
 class CompileErrorTests(unittest.TestCase):
     def check_to_path(self, path, params, exception, message):
-        to_path = repath.compile(path)
+        to_path = repath.template(path)
         with self.assertRaises(exception) as context:
             to_path(params)
 
