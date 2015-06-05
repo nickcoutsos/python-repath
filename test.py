@@ -69,7 +69,7 @@ class RePathTestCase(unittest.TestCase):
 # Tests based on the cases from the original path-to-regexp cases converted
 # into individually defined functions using helper assertion methods.
 class SimplePathTests(RePathTestCase):
-    def generated_test_0(self):
+    def test_empty_path(self):
         self.path('/')
 
         self.assert_parsed('/')
@@ -78,7 +78,7 @@ class SimplePathTests(RePathTestCase):
         self.assert_will_template('/')
         self.assert_will_template('/', id=123)
 
-    def generated_test_1(self):
+    def test_single_segment_no_trailing_slash(self):
         self.path('/test')
 
         self.assert_parsed('/test')
@@ -88,7 +88,7 @@ class SimplePathTests(RePathTestCase):
         self.assert_will_match('/test/', '/test/')
         self.assert_will_template('/test')
 
-    def generated_test_2(self):
+    def test_single_segment_with_trailing_slash(self):
         self.path('/test/')
 
         self.assert_parsed('/test/')
@@ -98,20 +98,19 @@ class SimplePathTests(RePathTestCase):
 
 
 class NonStringPathTests(RePathTestCase):
-    def generated_test_54(self):
+    def test_regex_pattern_matches_everything(self):
         self.path(re.compile('.*'))
-
 
         self.assert_will_match('/match/anything', '/match/anything')
 
-    def generated_test_55(self):
+    def test_regex_pattern_captures_everything(self):
         self.path(re.compile('(.*)'))
 
         self.assert_parsed(token(name='0', prefix=None, delimiter=None, pattern=None))
         self.assert_will_match('/match/anything', '/match/anything')
         self.assert_will_group('/match/anything', '/match/anything')
 
-    def generated_test_56(self):
+    def test_regex_pattern_matches_digits(self):
         self.path(re.compile('/(\\d+)'))
 
         self.assert_parsed(token(name='0', prefix=None, delimiter=None, pattern=None))
@@ -119,14 +118,14 @@ class NonStringPathTests(RePathTestCase):
         self.assert_will_match('/123', '/123')
         self.assert_will_group('/123', '123')
 
-    def generated_test_57(self):
+    def test_array_path_segment_or_digits(self):
         self.path(['/test', re.compile('/(\\d+)')])
 
         self.assert_parsed(token(name='0', prefix=None, delimiter=None, pattern=None))
         self.assert_will_match('/test', '/test')
         self.assert_will_group('/test', None)
 
-    def generated_test_58(self):
+    def test_named_capture_digit_or_nameless_capture_all(self):
         self.path(['/:test(\\d+)', re.compile('(.*)')])
 
         self.assert_parsed(
@@ -150,29 +149,28 @@ class NonStringPathTests(RePathTestCase):
         self.assert_will_match('/route/test', '/route/test')
         self.assert_will_group('/route/test', None, 'test')
 
-    def generated_test_60(self):
+    def test_regex_match_all_noncapture_group(self):
         self.path(re.compile('(?:.*)'))
-
 
         self.assert_will_match('/anything/you/want', '/anything/you/want')
 
 
 class OptionTests(RePathTestCase):
-    def generated_test_3(self):
+    def test_lowercase_segment_case_sensitive(self):
         self.path('/test', sensitive=True)
 
         self.assert_parsed('/test')
         self.assert_will_match('/test', '/test')
         self.assert_will_match('/TEST', None)
 
-    def generated_test_4(self):
+    def test_uppercase_segment_case_sensitive(self):
         self.path('/TEST', sensitive=True)
 
         self.assert_parsed('/TEST')
         self.assert_will_match('/test', None)
         self.assert_will_match('/TEST', '/TEST')
 
-    def generated_test_5(self):
+    def test_segment_without_trailing_slash_match_strict(self):
         self.path('/test', strict=True)
 
         self.assert_parsed('/test')
@@ -180,7 +178,7 @@ class OptionTests(RePathTestCase):
         self.assert_will_match('/test/', None)
         self.assert_will_match('/TEST', '/TEST')
 
-    def generated_test_6(self):
+    def test_segment_with_trailing_slash_mach_strict(self):
         self.path('/test/', strict=True)
 
         self.assert_parsed('/test/')
@@ -188,7 +186,7 @@ class OptionTests(RePathTestCase):
         self.assert_will_match('/test/', '/test/')
         self.assert_will_match('/test//', None)
 
-    def generated_test_7(self):
+    def test_segment_without_trailing_slash_non_ending(self):
         self.path('/test', end=False)
 
         self.assert_parsed('/test')
@@ -197,7 +195,7 @@ class OptionTests(RePathTestCase):
         self.assert_will_match('/test/route', '/test')
         self.assert_will_match('/route', None)
 
-    def generated_test_8(self):
+    def test_segment_with_trailing_slash_non_ending(self):
         self.path('/test/', end=False)
 
         self.assert_parsed('/test/')
@@ -205,7 +203,7 @@ class OptionTests(RePathTestCase):
         self.assert_will_match('/test//', '/test')
         self.assert_will_match('/test//route', '/test')
 
-    def generated_test_9(self):
+    def test_capture_segment_without_trailing_slash_non_ending(self):
         self.path('/:test', end=False)
 
         self.assert_parsed(token(name='test', prefix='/', delimiter='/', pattern='[^/]+?'))
@@ -214,7 +212,7 @@ class OptionTests(RePathTestCase):
         self.assert_will_template(None)
         self.assert_will_template('/abc', test='abc')
 
-    def generated_test_10(self):
+    def test_capture_segment_with_trailing_slash_non_ending(self):
         self.path('/:test/', end=False)
 
         self.assert_parsed(
@@ -225,7 +223,7 @@ class OptionTests(RePathTestCase):
         self.assert_will_group('/route', 'route', test='route')
         self.assert_will_template('/abc/', test='abc')
 
-    def generated_test_11(self):
+    def test_segment_without_trailing_slash_match_strict_non_ending(self):
         self.path('/test', strict=True, end=False)
 
         self.assert_parsed('/test')
@@ -233,7 +231,7 @@ class OptionTests(RePathTestCase):
         self.assert_will_match('/test/', '/test')
         self.assert_will_match('/test/route', '/test')
 
-    def generated_test_12(self):
+    def test_segment_with_trailing_slash_match_strict_non_ending(self):
         self.path('/test/', strict=True, end=False)
 
         self.assert_parsed('/test/')
@@ -242,7 +240,7 @@ class OptionTests(RePathTestCase):
         self.assert_will_match('/test//', '/test/')
         self.assert_will_match('/test/route', '/test/')
 
-    def generated_test_13(self):
+    def test_segment_with_file_extension_match_strict_non_ending(self):
         self.path('/test.json', strict=True, end=False)
 
         self.assert_parsed('/test.json')
@@ -250,7 +248,7 @@ class OptionTests(RePathTestCase):
         self.assert_will_match('/test.json.hbs', None)
         self.assert_will_match('/test.json/route', '/test.json')
 
-    def generated_test_14(self):
+    def test_capture_segment_without_trailing_slash_match_strict_non_ending(self):
         self.path('/:test', strict=True, end=False)
 
         self.assert_parsed(token(name='test', prefix='/', delimiter='/', pattern='[^/]+?'))
@@ -261,7 +259,7 @@ class OptionTests(RePathTestCase):
         self.assert_will_template(None)
         self.assert_will_template('/abc', test='abc')
 
-    def generated_test_15(self):
+    def test_capture_segment_with_trailing_slash_match_strict_non_ending(self):
         self.path('/:test/', strict=True, end=False)
 
         self.assert_parsed(
@@ -273,16 +271,15 @@ class OptionTests(RePathTestCase):
         self.assert_will_group('/route/', 'route', test='route')
         self.assert_will_template('/foobar/', test='foobar')
 
-    def generated_test_16(self):
+    def test_alternative_matching_paths(self):
         self.path(['/one', '/two'])
-
 
         self.assert_will_match('/one', '/one')
         self.assert_will_match('/two', '/two')
         self.assert_will_match('/three', None)
         self.assert_will_match('/one/two', None)
 
-    def generated_test_17(self):
+    def test_segment_without_trailing_slash_non_ending(self):
         self.path('/test', end=False)
 
         self.assert_parsed('/test')
@@ -290,7 +287,7 @@ class OptionTests(RePathTestCase):
 
 
 class CaptureTests(RePathTestCase):
-    def generated_test_18(self):
+    def test_capture_single_segment(self):
         self.path('/:test')
 
         self.assert_parsed(token(name='test', prefix='/', delimiter='/', pattern='[^/]+?'))
@@ -303,7 +300,7 @@ class CaptureTests(RePathTestCase):
         self.assert_will_group('/route.json', 'route.json', test='route.json')
         self.assert_will_template('/route', test='route')
 
-    def generated_test_19(self):
+    def test_capture_single_segment_match_strict(self):
         self.path('/:test', strict=True)
 
         self.assert_parsed(token(name='test', prefix='/', delimiter='/', pattern='[^/]+?'))
@@ -312,7 +309,7 @@ class CaptureTests(RePathTestCase):
         self.assert_will_match('/route/', None)
         self.assert_will_template('/route', test='route')
 
-    def generated_test_20(self):
+    def test_capture_segment_with_trailing_slash_match_strict(self):
         self.path('/:test/', strict=True)
 
         self.assert_parsed(
@@ -324,7 +321,7 @@ class CaptureTests(RePathTestCase):
         self.assert_will_match('/route//', None)
         self.assert_will_template('/route/', test='route')
 
-    def generated_test_21(self):
+    def test_capture_segment_without_trailing_slash_non_ending(self):
         self.path('/:test', end=False)
 
         self.assert_parsed(token(name='test', prefix='/', delimiter='/', pattern='[^/]+?'))
@@ -334,7 +331,7 @@ class CaptureTests(RePathTestCase):
         self.assert_will_group('/route//', 'route', test='route')
         self.assert_will_template('/route', test='route')
 
-    def generated_test_22(self):
+    def test_capture_segment_optional(self):
         self.path('/:test?')
 
         self.assert_parsed(token(name='test', prefix='/', delimiter='/', optional=True, pattern='[^/]+?'))
@@ -346,7 +343,7 @@ class CaptureTests(RePathTestCase):
         self.assert_will_match('//', None)
         self.assert_will_template('/foobar', test='foobar')
 
-    def generated_test_23(self):
+    def test_capture_segment_optional_match_strict(self):
         self.path('/:test?', strict=True)
 
         self.assert_parsed(token(name='test', prefix='/', delimiter='/', optional=True, pattern='[^/]+?'))
@@ -356,7 +353,7 @@ class CaptureTests(RePathTestCase):
         self.assert_will_match('//', None)
         self.assert_will_template('/foobar', test='foobar')
 
-    def generated_test_24(self):
+    def test_capture_segment_optional_with_trailing_slash_match_strict(self):
         self.path('/:test?/', strict=True)
 
         self.assert_parsed(
@@ -373,7 +370,7 @@ class CaptureTests(RePathTestCase):
 
 
 class RepetitionTests(RePathTestCase):
-    def generated_test_25(self):
+    def test_capture_segment_repeating(self):
         self.path('/:test+')
 
         self.assert_parsed(token(name='test', prefix='/', delimiter='/', repeat=True, pattern='[^/]+?'))
@@ -387,7 +384,7 @@ class RepetitionTests(RePathTestCase):
         self.assert_will_template('/foobar', test='foobar')
         self.assert_will_template('/a/b/c', test=['a', 'b', 'c'])
 
-    def generated_test_26(self):
+    def test_capture_custom_segment_repeating(self):
         self.path('/:test(\\d+)+')
 
         self.assert_parsed(token(name='test', prefix='/', delimiter='/', repeat=True, pattern='\\d+'))
@@ -398,7 +395,7 @@ class RepetitionTests(RePathTestCase):
         self.assert_will_template('/123', test=123)
         self.assert_will_template('/1/2/3', test=[1, 2, 3])
 
-    def generated_test_27(self):
+    def test_segment_capture_extension_from_optional_cases_repeating(self):
         self.path('/route.:ext(json|xml)+')
 
         self.assert_parsed(
@@ -415,7 +412,7 @@ class RepetitionTests(RePathTestCase):
         self.assert_will_template('/route.xml', ext='xml')
         self.assert_will_template('/route.xml.json', ext=['xml', 'json'])
 
-    def generated_test_28(self):
+    def test_segment_capture_optional_repeat(self):
         self.path('/:test*')
 
         self.assert_parsed(token(name='test', prefix='/', delimiter='/', optional=True, repeat=True, pattern='[^/]+?'))
@@ -430,7 +427,7 @@ class RepetitionTests(RePathTestCase):
         self.assert_will_template('/foobar', test='foobar')
         self.assert_will_template('/foo/bar', test=['foo', 'bar'])
 
-    def generated_test_29(self):
+    def test_segment_capture_extension_repeating(self):
         self.path('/route.:ext([a-z]+)*')
 
         self.assert_parsed(
@@ -450,7 +447,7 @@ class RepetitionTests(RePathTestCase):
         self.assert_will_template('/route.foobar', ext='foobar')
         self.assert_will_template('/route.foo.bar', ext=['foo', 'bar'])
 
-    def generated_test_30(self):
+    def test_capture_custom_segment_digits_only(self):
         self.path('/:test(\\d+)')
 
         self.assert_parsed(token(name='test', prefix='/', delimiter='/', pattern='\\d+'))
@@ -461,7 +458,7 @@ class RepetitionTests(RePathTestCase):
         self.assert_will_template(None, test='abc')
         self.assert_will_template('/123', test='123')
 
-    def generated_test_31(self):
+    def test_capture_custom_segment_digits_only_non_ending(self):
         self.path('/:test(\\d+)', end=False)
 
         self.assert_parsed(token(name='test', prefix='/', delimiter='/', pattern='\\d+'))
@@ -472,7 +469,7 @@ class RepetitionTests(RePathTestCase):
         self.assert_will_group('/123/abc', '123', test='123')
         self.assert_will_template('/123', test='123')
 
-    def generated_test_32(self):
+    def test_capture_custom_segment_any_characters(self):
         self.path('/:test(.*)')
 
         self.assert_parsed(token(name='test', prefix='/', delimiter='/', pattern='.*'))
@@ -482,7 +479,7 @@ class RepetitionTests(RePathTestCase):
         self.assert_will_template('/abc', test='abc')
         self.assert_will_template('/abc%2F123', test='abc/123')
 
-    def generated_test_33(self):
+    def test_capture_custom_segment_letters_only(self):
         self.path('/:route([a-z]+)')
 
         self.assert_parsed(token(name='route', prefix='/', delimiter='/', pattern='[a-z]+'))
@@ -493,7 +490,7 @@ class RepetitionTests(RePathTestCase):
         self.assert_will_template(None, route='123')
         self.assert_will_template('/abc', route='abc')
 
-    def generated_test_34(self):
+    def test_capure_segment_from_selected_strings(self):
         self.path('/:route(this|that)')
 
         self.assert_parsed(token(name='route', prefix='/', delimiter='/', pattern='this|that'))
@@ -508,14 +505,14 @@ class RepetitionTests(RePathTestCase):
 
 
 class UnprexedPatternTests(RePathTestCase):
-    def generated_test_35(self):
+    def test_match_unprefixed_string(self):
         self.path('test')
 
         self.assert_parsed('test')
         self.assert_will_match('test', 'test')
         self.assert_will_match('/test', None)
 
-    def generated_test_36(self):
+    def test_capture_unprefixed_string(self):
         self.path(':test')
 
         self.assert_parsed(token(name='test', delimiter='/', pattern='[^/]+?'))
@@ -529,7 +526,7 @@ class UnprexedPatternTests(RePathTestCase):
         self.assert_will_template(None, test=None)
         self.assert_will_template('route', test='route')
 
-    def generated_test_37(self):
+    def test_capture_unprefixed_string_match_strict(self):
         self.path(':test', strict=True)
 
         self.assert_parsed(token(name='test', delimiter='/', pattern='[^/]+?'))
@@ -539,7 +536,7 @@ class UnprexedPatternTests(RePathTestCase):
         self.assert_will_match('route/', None)
         self.assert_will_template('route', test='route')
 
-    def generated_test_38(self):
+    def test_capture_unprefixed_string_non_ending(self):
         self.path(':test', end=False)
 
         self.assert_parsed(token(name='test', delimiter='/', pattern='[^/]+?'))
@@ -552,7 +549,7 @@ class UnprexedPatternTests(RePathTestCase):
         self.assert_will_group('route/foobar', 'route', test='route')
         self.assert_will_template('route', test='route')
 
-    def generated_test_39(self):
+    def test_capture_unprefixed_string_optional(self):
         self.path(':test?')
 
         self.assert_parsed(token(name='test', delimiter='/', optional=True, pattern='[^/]+?'))
@@ -568,7 +565,7 @@ class UnprexedPatternTests(RePathTestCase):
 
 
 class PathExtensionTests(RePathTestCase):
-    def generated_test_40(self):
+    def test_match_filename_and_extension(self):
         self.path('/test.json')
 
         self.assert_parsed('/test.json')
@@ -576,7 +573,7 @@ class PathExtensionTests(RePathTestCase):
         self.assert_will_match('/route.json', None)
         self.assert_will_template('/test.json')
 
-    def generated_test_41(self):
+    def test_capture_filename_with_specific_extension(self):
         self.path('/:test.json')
 
         self.assert_parsed(
@@ -591,7 +588,7 @@ class PathExtensionTests(RePathTestCase):
         self.assert_will_group('/route.json.json', 'route.json', test='route.json')
         self.assert_will_template('/foo.json', test='foo')
 
-    def generated_test_42(self):
+    def test_match_filename_capture_extension(self):
         self.path('/test.:format')
 
         self.assert_parsed(
@@ -605,7 +602,7 @@ class PathExtensionTests(RePathTestCase):
         self.assert_will_template(None, format='')
         self.assert_will_template('/test.foo', format='foo')
 
-    def generated_test_43(self):
+    def test_match_filename_capture_extension_repeating(self):
         self.path('/test.:format+')
 
         self.assert_parsed(
@@ -620,7 +617,7 @@ class PathExtensionTests(RePathTestCase):
         self.assert_will_template('/test.foo', format='foo')
         self.assert_will_template('/test.foo.bar', format=['foo', 'bar'])
 
-    def generated_test_44(self):
+    def test_match_filename_capture_extension_non_ending(self):
         self.path('/test.:format', end=False)
 
         self.assert_parsed(
@@ -632,7 +629,7 @@ class PathExtensionTests(RePathTestCase):
         self.assert_will_match('/test.hbs.html', None)
         self.assert_will_template('/test.foo', format='foo')
 
-    def generated_test_45(self):
+    def test_match_filename_capture_extension_expect_trailing_dot(self):
         self.path('/test.:format.')
 
         self.assert_parsed(
@@ -646,7 +643,7 @@ class PathExtensionTests(RePathTestCase):
         self.assert_will_template(None, format='')
         self.assert_will_template('/test.foo.', format='foo')
 
-    def generated_test_46(self):
+    def test_capture_filename_and_extension_separately(self):
         self.path('/:test.:format')
 
         self.assert_parsed(
@@ -661,7 +658,7 @@ class PathExtensionTests(RePathTestCase):
         self.assert_will_template(None)
         self.assert_will_template('/route.foo', test='route', format='foo')
 
-    def generated_test_47(self):
+    def test_capture_filename_and_optionally_extension(self):
         self.path('/:test.:format?')
 
         self.assert_parsed(
@@ -678,7 +675,7 @@ class PathExtensionTests(RePathTestCase):
         self.assert_will_template(None, test='route', format='')
         self.assert_will_template('/route.foo', test='route', format='foo')
 
-    def generated_test_48(self):
+    def test_capture_filename_and_optionally_extension_non_ending(self):
         self.path('/:test.:format?', end=False)
 
         self.assert_parsed(
@@ -696,7 +693,7 @@ class PathExtensionTests(RePathTestCase):
         self.assert_will_template(None, test='route', format='')
         self.assert_will_template('/route.foo', test='route', format='foo')
 
-    def generated_test_49(self):
+    def test_capture_extension_with_custom_suffix(self):
         self.path('/test.:format(.*)z', end=False)
 
         self.assert_parsed(
@@ -715,7 +712,7 @@ class PathExtensionTests(RePathTestCase):
 
 
 class UnnamedCaptureGroupTests(RePathTestCase):
-    def generated_test_50(self):
+    def test_capture_segment_digits_only(self):
         self.path('/(\\d+)')
 
         self.assert_parsed(token(name='0', prefix='/', delimiter='/', pattern='\\d+'))
@@ -725,7 +722,7 @@ class UnnamedCaptureGroupTests(RePathTestCase):
         self.assert_will_match('/123/abc', None)
         self.assert_will_template(None)
 
-    def generated_test_51(self):
+    def test_capture_segment_digits_non_ending(self):
         self.path('/(\\d+)', end=False)
 
         self.assert_parsed(token(name='0', prefix='/', delimiter='/', pattern='\\d+'))
@@ -737,7 +734,7 @@ class UnnamedCaptureGroupTests(RePathTestCase):
         self.assert_will_match('/123/', '/123/')
         self.assert_will_group('/123/', '123')
 
-    def generated_test_52(self):
+    def test_capture_optional_segment_digits_only(self):
         self.path('/(\\d+)?')
 
         self.assert_parsed(token(name='0', prefix='/', delimiter='/', optional=True, pattern='\\d+'))
@@ -747,7 +744,7 @@ class UnnamedCaptureGroupTests(RePathTestCase):
         self.assert_will_group('/123', '123')
         self.assert_will_template('')
 
-    def generated_test_53(self):
+    def test_capture_anything(self):
         self.path('/(.*)')
 
         self.assert_parsed(token(name='0', prefix='/', delimiter='/', pattern='.*'))
@@ -760,14 +757,14 @@ class UnnamedCaptureGroupTests(RePathTestCase):
 
 
 class EscapedCharacterTests(RePathTestCase):
-    def generated_test_61(self):
+    def test_escaped_parans(self):
         self.path('/\\(testing\\)')
 
         self.assert_parsed('/(testing)')
         self.assert_will_match('/testing', None)
         self.assert_will_match('/(testing)', '/(testing)')
 
-    def generated_test_62(self):
+    def test_escaped_regex_special_characters(self):
         self.path('/.+\\*?=^!:${}[]|')
 
         self.assert_parsed('/.+*?=^!:${}[]|')
@@ -775,7 +772,7 @@ class EscapedCharacterTests(RePathTestCase):
 
 
 class WildcardPatternTests(RePathTestCase):
-    def generated_test_63(self):
+    def test_match_whatever(self):
         self.path('/*')
 
         self.assert_parsed(token(name='0', prefix='/', delimiter='/', pattern='.*'))
@@ -785,7 +782,7 @@ class WildcardPatternTests(RePathTestCase):
         self.assert_will_match('/foo/bar', '/foo/bar')
         self.assert_will_group('/foo/bar', 'foo/bar')
 
-    def generated_test_64(self):
+    def test_match_path_and_optional_nested_paths(self):
         self.path('/foo/*')
 
         self.assert_parsed(
@@ -800,7 +797,7 @@ class WildcardPatternTests(RePathTestCase):
         self.assert_will_match('/foo/bar', '/foo/bar')
         self.assert_will_group('/foo/bar', 'bar')
 
-    def generated_test_65(self):
+    def test_capture_path_with_optional_nested_paths(self):
         self.path('/:foo/*')
 
         self.assert_parsed(
@@ -818,7 +815,7 @@ class WildcardPatternTests(RePathTestCase):
 
 
 class ExampleUseTests(RePathTestCase):
-    def generated_test_66(self):
+    def test_capture_multiple_segments(self):
         self.path('/:foo/:bar')
 
         self.assert_parsed(
@@ -829,7 +826,7 @@ class ExampleUseTests(RePathTestCase):
         self.assert_will_group('/match/route', 'match', 'route', foo='match', bar='route')
         self.assert_will_template('/a/b', foo='a', bar='b')
 
-    def generated_test_67(self):
+    def test_capture_segments_with_custom_patterns(self):
         self.path('/:remote([\\w\\-.]+)/:user([\\w\\-]+)')
 
         self.assert_parsed(
@@ -845,7 +842,7 @@ class ExampleUseTests(RePathTestCase):
         self.assert_will_template('/foo/bar', remote='foo', user='bar')
         self.assert_will_template('/foo.bar/uno', remote='foo.bar', user='uno')
 
-    def generated_test_68(self):
+    def test_capture_segment_followed_by_question_mark(self):
         self.path('/:foo\\?')
 
         self.assert_parsed(
@@ -856,7 +853,7 @@ class ExampleUseTests(RePathTestCase):
         self.assert_will_group('/route?', 'route', foo='route')
         self.assert_will_template('/bar?', foo='bar')
 
-    def generated_test_69(self):
+    def test_capture_segment_with_unicode_characters(self):
         self.path('/:foo')
 
         self.assert_parsed(token(name='foo', prefix='/', delimiter='/', pattern='[^/]+?'))
