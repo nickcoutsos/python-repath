@@ -194,34 +194,6 @@ def tokens_to_pattern(tokens, end=True, strict=False):
     return '^%s' % route
 
 
-def array_to_pattern(paths, **options):
-    """
-    Generate a single pattern from an array of path pattern values.
-
-    """
-    parts = [
-        path_to_pattern(path, **options)
-        for path in paths
-    ]
-
-    return '(?:%s)' % ('|'.join(parts))
-
-
-def string_to_pattern(path, **options):
-    """
-    Generate pattern for a string.
-
-    Equivalent to `tokens_to_pattern(parse(string))`.
-
-    """
-    tokens = parse(path)
-    pattern = tokens_to_pattern(tokens, **options)
-
-    tokens = filter(lambda t: not isinstance(t, basestring), tokens)
-
-    return pattern
-
-
 def path_to_pattern(path, **options):
     """
     Generate a pattern from any kind of path value.
@@ -233,8 +205,14 @@ def path_to_pattern(path, **options):
     if isinstance(path, REGEXP_TYPE):
         return path.pattern
     if isinstance(path, list):
-        return array_to_pattern(path, **options)
-    return string_to_pattern(path, **options)
+        parts = [path_to_pattern(p, **options) for p in path]
+        return '(?:%s)' % '|'.join(parts)
+
+    tokens = parse(path)
+    pattern = tokens_to_pattern(tokens, **options)
+
+    tokens = filter(lambda t: not isinstance(t, basestring), tokens)
+    return pattern
 
 
 def compile(string):
