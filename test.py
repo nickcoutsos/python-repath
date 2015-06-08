@@ -1,6 +1,8 @@
 import re
 import unittest
 
+import six
+
 import repath
 
 DEFAULT_TOKEN = {
@@ -10,7 +12,7 @@ DEFAULT_TOKEN = {
 }
 
 def token(t=None, **kwargs):
-    if isinstance(t, basestring):
+    if isinstance(t, six.string_types):
         return t
     t = DEFAULT_TOKEN.copy()
     t.update(kwargs)
@@ -28,7 +30,7 @@ class RePathTestCase(unittest.TestCase):
         self.pattern = repath.pattern(path, **options)
         self.regex = re.compile(self.pattern, flags)
 
-        if isinstance(path, basestring):
+        if isinstance(path, six.string_types):
             self.template = repath.template(path)
             self.tokens = repath.parse(path)
 
@@ -900,7 +902,7 @@ class CompileErrorTests(unittest.TestCase):
         with self.assertRaises(exception) as context:
             to_path(params)
 
-        self.assertEqual(context.exception.message, message)
+        self.assertEqual(context.exception.args[0], message)
 
     def test_should_raise_error_when_a_required_param_is_missing(self):
         self.check_to_path(
