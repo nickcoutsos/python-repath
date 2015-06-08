@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 import re
 import unittest
 
@@ -859,9 +861,9 @@ class ExampleUseTests(RePathTestCase):
         self.path('/:foo')
 
         self.assert_parsed(token(name='foo', prefix='/', delimiter='/', pattern='[^/]+?'))
-        self.assert_will_match(u'/caf\xe9', u'/caf\xe9')
-        self.assert_will_group(u'/caf\xe9', u'caf\xe9', foo=u'caf\xe9')
-        self.assert_will_template('/caf%C3%A9', foo=u'caf\xe9')
+        self.assert_will_match('/caf\xe9', '/caf\xe9')
+        self.assert_will_group('/caf\xe9', 'caf\xe9', foo='caf\xe9')
+        self.assert_will_template('/caf%C3%A9', foo='caf\xe9')
 
 
 class Tests(unittest.TestCase):
