@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.7.1] - 2015-06-08
+### Added
+* Support for Python 3.2+
+
 
 ## [0.6.3] - 2015-06-05
 ### Fixed
@@ -46,7 +50,8 @@ types of values.
 * Module only generates regular expression patterns, not regex objects
 * `keys` argument is not used, made redundant by named capture groups
 
-[unreleased]: https://github.com/nickcoutsos/python-repath/compare/v0.6.3...HEAD
+[unreleased]: https://github.com/nickcoutsos/python-repath/compare/v0.7.1...HEAD
+[0.7.1]: https://github.com/nickcoutsos/python-repath/compare/v0.6.3...v0.7.1
 [0.6.3]: https://github.com/nickcoutsos/python-repath/compare/v0.6.1...v0.6.3
 [0.6.1]: https://github.com/nickcoutsos/python-repath/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/nickcoutsos/python-repath/compare/v0.5.0...v0.6.0
