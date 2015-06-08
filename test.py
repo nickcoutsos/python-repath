@@ -1,5 +1,9 @@
+from __future__ import unicode_literals
+
 import re
 import unittest
+
+import six
 
 import repath
 
@@ -10,7 +14,7 @@ DEFAULT_TOKEN = {
 }
 
 def token(t=None, **kwargs):
-    if isinstance(t, basestring):
+    if isinstance(t, six.string_types):
         return t
     t = DEFAULT_TOKEN.copy()
     t.update(kwargs)
@@ -28,7 +32,7 @@ class RePathTestCase(unittest.TestCase):
         self.pattern = repath.pattern(path, **options)
         self.regex = re.compile(self.pattern, flags)
 
-        if isinstance(path, basestring):
+        if isinstance(path, six.string_types):
             self.template = repath.template(path)
             self.tokens = repath.parse(path)
 
@@ -857,9 +861,9 @@ class ExampleUseTests(RePathTestCase):
         self.path('/:foo')
 
         self.assert_parsed(token(name='foo', prefix='/', delimiter='/', pattern='[^/]+?'))
-        self.assert_will_match(u'/caf\xe9', u'/caf\xe9')
-        self.assert_will_group(u'/caf\xe9', u'caf\xe9', foo=u'caf\xe9')
-        self.assert_will_template('/caf%C3%A9', foo=u'caf\xe9')
+        self.assert_will_match('/caf\xe9', '/caf\xe9')
+        self.assert_will_group('/caf\xe9', 'caf\xe9', foo='caf\xe9')
+        self.assert_will_template('/caf%C3%A9', foo='caf\xe9')
 
 
 class Tests(unittest.TestCase):
@@ -900,7 +904,7 @@ class CompileErrorTests(unittest.TestCase):
         with self.assertRaises(exception) as context:
             to_path(params)
 
-        self.assertEqual(context.exception.message, message)
+        self.assertEqual(context.exception.args[0], message)
 
     def test_should_raise_error_when_a_required_param_is_missing(self):
         self.check_to_path(

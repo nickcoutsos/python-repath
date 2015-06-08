@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='repath',
-    version='0.6.3',
+    version='0.7.1',
     url='https://github.com/nickcoutsos/python-repath',
     author='Nikolaos Coutsos',
     author_email='ncoutsos@gmail.com',
@@ -12,6 +12,9 @@ setup(
         'Parses express-style paths to PCRE regular expression patterns, '
         'taking advantage of Python\'s named capture groups.'
     ),
+    install_requires=[
+        "six==1.9.0",
+    ],
     packages=[],
     py_modules=['repath'],
     keywords='url path pattern regex express route',
@@ -23,6 +26,7 @@ setup(
         'Natural Language :: English',
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 3',
         'Topic :: Internet',
         'Topic :: Internet :: WWW/HTTP',
     ],

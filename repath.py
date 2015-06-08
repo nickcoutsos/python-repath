@@ -1,5 +1,7 @@
 import re
-import urllib
+
+import six
+from six.moves.urllib import parse as urllib
 
 REGEXP_TYPE = type(re.compile(''))
 
@@ -138,7 +140,7 @@ def tokens_to_template(tokens):
         obj = obj or {}
 
         for token in tokens:
-            if isinstance(token, basestring):
+            if isinstance(token, six.string_types):
                 path += token
                 continue
 
@@ -168,7 +170,7 @@ def tokens_to_template(tokens):
                         )
 
                 for i, val in enumerate(value):
-                    val = unicode(val)
+                    val = six.text_type(val)
                     if not regexp.search(val):
                         raise ValueError(
                             'Expected all "{name}" to match "{pattern}"'.format(**token)
@@ -179,7 +181,7 @@ def tokens_to_template(tokens):
 
                 continue
 
-            value = unicode(value)
+            value = six.text_type(value)
             if not regexp.search(value):
                 raise ValueError(
                     'Expected "{name}" to match "{pattern}"'.format(**token)
@@ -198,10 +200,10 @@ def tokens_to_pattern(tokens, end=True, strict=False):
     """
     route = ''
     last = tokens[-1]
-    trailing_slash = isinstance(last, basestring) and last.endswith('/')
+    trailing_slash = isinstance(last, six.string_types) and last.endswith('/')
 
     for token in tokens:
-        if isinstance(token, basestring):
+        if isinstance(token, six.string_types):
             route += escape_string(token)
             continue
 
