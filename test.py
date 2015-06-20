@@ -897,6 +897,25 @@ class Tests(unittest.TestCase):
 
         self.assertEqual(fn({'id': 123}), '/user/123')
 
+    def test_match_returns_regex_match_results(self):
+        path = '/:foo/:bar'
+
+        results = repath.match(path, '/something/another')
+
+        self.assertIsNotNone(results)
+        self.assertIsNotNone(results.groupdict())
+        self.assertEqual(results.groupdict()['foo'], 'something')
+        self.assertEqual(results.groupdict()['bar'], 'another')
+
+    def test_compile_returns_regex_object(self):
+        path = '/route/:foo'
+
+        regex = repath.compile(path, re.I)
+
+        self.assertIsInstance(regex, type(re.compile('')))
+        self.assertIsNotNone(regex.match('/ROUTE/test'))
+        self.assertIsNone(regex.match('/routes/test'))
+
 
 class CompileErrorTests(unittest.TestCase):
     def check_to_path(self, path, params, exception, message):

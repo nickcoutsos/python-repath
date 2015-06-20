@@ -236,6 +236,33 @@ def tokens_to_pattern(tokens, end=True, strict=False):
     return '^%s' % route
 
 
+def compile(path, flags=0, **options):
+    """
+    Create a comiled regular expresion from the given path.
+
+    :param path: express-style path string
+    :param flags: (optional) regex flags as defined in :mod:`re`
+    :param options: (optional) dictionary of options accepted by :func:`pattern`
+    :return: A :mod:`re` compiled regular expression object.
+
+    """
+    return re.compile(pattern(path, **options), flags)
+
+
+def match(path, string, flags=0, **options):
+    """
+    Match a string against a path.
+
+    :param path: express-style path string
+    :param string: a string to match against the generated regular expression
+    :param flags: (optional) regex flags as defined in :mod:`re`
+    :param options: (optional) dictionary of options accepted by :func:`pattern`
+    :return: A :class:`_sre.SRE_Match` or ``None``
+
+    """
+    return compile(path, flags=0, **options).match(string)
+
+
 def pattern(path, **options):
     """
     Generate a pattern from any kind of path value.

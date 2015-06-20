@@ -51,6 +51,14 @@ if match:
 '^/foo/(?<bar>[^/]+?)/?$'
 ```
 
+**Shortcut:**
+
+```python
+>>> from repath import match
+>>> match('/things/:thing', /things/1234').groupdict()
+{'thing': '1234'}
+```
+
 ### Parameters
 
 The path has the ability to define parameters and automatically generate capture
