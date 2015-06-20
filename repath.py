@@ -77,7 +77,8 @@ def parse(string):
     """
     Parse a string for the raw tokens.
 
-    Return array of tokens
+    :param path: express-style path string
+    :return: list of path tokens used by :func:`tokens_to_pattern`
 
     """
     tokens = []
@@ -242,6 +243,11 @@ def pattern(path, **options):
     This function selects the appropriate function array/regex/string paths,
     and calls it with the provided values.
 
+    :param path: express-style path string, or list of paths, or compiled regex
+    :param end: Make *path* match to the end of strings (default ``True``)
+    :param strict: Enforce trailing slash in matched strins (default ``False``)
+    :return: A regular expression pattern string
+
     """
     if isinstance(path, REGEXP_TYPE):
         return path.pattern
@@ -252,9 +258,12 @@ def pattern(path, **options):
     return tokens_to_pattern(parse(path), **options)
 
 
-def template(string):
+def template(path):
     """
     Compile a string to a template function for the path.
 
+    :param path: express-style path string
+    :return: A template funcion for generating paths from given field values
+
     """
-    return tokens_to_template(parse(string))
+    return tokens_to_template(parse(path))
