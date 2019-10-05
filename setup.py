@@ -13,7 +13,7 @@ setup(
         'taking advantage of Python\'s named capture groups.'
     ),
     install_requires=[
-        "six==1.9.0",
+        "six>=1.9.0",
     ],
     packages=[],
     py_modules=['repath'],
