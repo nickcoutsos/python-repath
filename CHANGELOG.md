@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.9.0] - 2019-10-05
+#### Changed
+* Accept versions of `six>=1.9.0`, thanks [Joe Bateson](https://github.com/jdb8)
+
 ## [0.8.0] - 2015-06-20
 ### Added
 * Helper functions `compile` and `match` to let users skip straight to regexes
