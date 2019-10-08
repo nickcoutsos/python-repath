@@ -1,13 +1,13 @@
 language: python
-env:
-    - TOXENV=py27
-    - TOXENV=py34
-    - TOXENV=py35
-    - TOXENV=py36
-    - TOXENV=py37
+python:
+    - "2.7"
+    - "3.4"
+    - "3.5"
+    - "3.6"
+    - "3.7"
 install:
-    - pip install tox nose coverage python-coveralls
+    - pip install nose coverage python-coveralls
 script:
-    - tox
+    - nosetests --with-coverage --cover-branch --cover-package=.
 after_success:
   - coveralls
